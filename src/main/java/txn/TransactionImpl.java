@@ -36,10 +36,10 @@ public class TransactionImpl implements Transaction {
 
      //   StoreService.getInstance().getStore().put(log);
 
-        for (TransactionalResource resource : resources)
-        {
+        resources.stream().forEach(resource->{
+
             resource.commit();
-        }
+        });
 
         resources.clear();
 
@@ -88,6 +88,12 @@ public class TransactionImpl implements Transaction {
     @Override
     public void rollback() throws IllegalStateException, SystemException {
         this.status = TxnStatus.Rolledback;
+
+        resources.stream().forEach(resource->{
+            resource.rollback();
+        });
+
+        resources.clear();
     }
 
     @Override
