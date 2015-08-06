@@ -21,8 +21,8 @@ public class Context {
         return ut;
     }
 
-  /*  public static TransactionManager getTransactionManager()
+    public static TransactionManager getTransactionManager()
     {
         return Holder.transactionManager;
-    }*/
+    }
 }
