@@ -12,7 +12,7 @@ public class EventTester {
        EventFramework ef = new EventFramework(Mode.LMAX,new RoundRobinLoadBalancer(4),new ProcessorTester(), new MyStringMessage());
 
         for (int i=0;i<10;i++) {
-            ef.sendMessage(new MyStringMessage("Hello Event World"));
+            ef.sendMessage(new MyStringMessage("Hello Event World" +i));
 
         }
 
