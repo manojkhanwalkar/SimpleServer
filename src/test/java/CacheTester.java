@@ -3,9 +3,6 @@ import txn.Context;
 
 import javax.transaction.UserTransaction;
 
-/**
- * Created by mkhanwalkar on 8/5/15.
- */
 public class CacheTester {
 
     public static void main(String[] args) throws Exception {
