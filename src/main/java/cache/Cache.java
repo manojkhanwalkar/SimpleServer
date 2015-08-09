@@ -6,10 +6,7 @@ import txn.TransactionalResource;
 
 import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -60,7 +57,7 @@ public class Cache<K,V> implements TransactionalResource {
     {
 
         Map<K,Map<K, V>> txnMap = localSecMap.get();
-        if (txnMap!=null)
+        if (txnMap!=null&& txnMap.size()!=0)
         {
             Map<K, V> txnMap1 = txnMap.get(keyType);
              V kv = txnMap1.get(key);
@@ -85,7 +82,7 @@ public class Cache<K,V> implements TransactionalResource {
     {
 
         Map<K,Map<K, Set<V>>> txnMap = localSecNUMap.get();
-        if (txnMap!=null)
+        if (txnMap!=null&& txnMap.size()!=0)
         {
             Map<K, Set<V>> txnMap1 = txnMap.get(keyType);
             Set<V> kv = txnMap1.get(key);
@@ -111,7 +108,7 @@ public class Cache<K,V> implements TransactionalResource {
     public V get(K key)
     {
         Map<K, V> txnMap = localMap.get();
-        if (txnMap!=null)
+        if (txnMap!=null&& txnMap.size()!=0)
         {
             V kv = txnMap.get(key);
             if (kv!=null)
@@ -160,7 +157,7 @@ public class Cache<K,V> implements TransactionalResource {
     }
 
 
-    public void put(K key , V obj, List<Tuple<K,K>> secKeyInfo) throws KeyLockedException
+    public void put(K key , V obj, List<Tuple<K,K>> secKeyInfo, List<Tuple<K,K>> secNUKeyInfo) throws KeyLockedException
     {
         try {
             TransactionImpl transaction = (TransactionImpl) Context.getTransactionManager().getTransaction();
@@ -214,6 +211,39 @@ public class Cache<K,V> implements TransactionalResource {
 
 
         });
+
+        {
+            // Add the sec non unique keys
+            secNUKeyInfo.stream().forEach(t->{
+                K keyType = t.getKeyType();
+                K keyValue = t.getKeyValue();
+                //      ThreadLocal<Map<String,Map<K, V>>> localSecMap  = new ThreadLocal<>();
+                Map<K,Map<K, Set<V>>> tmp = localSecNUMap.get();
+                if (tmp==null)
+                {
+                    tmp = new HashMap<K, Map<K, Set<V>>>();
+                    localSecNUMap.set(tmp);
+                }
+
+                Map<K, Set<V>> tmp1 = tmp.get(keyType);
+                if (tmp1==null)
+                {
+                    tmp1= new HashMap<K, Set<V>>();
+                    tmp.put(keyType,tmp1);
+                }
+                Set<V> set = tmp1.get(keyType);
+                if (set==null)
+                {
+                    set = new HashSet<V>();
+                    tmp1.put(keyValue,set);
+                }
+                set.add(obj);
+
+
+
+            });
+
+        }
 
 
     }

@@ -10,7 +10,7 @@ public class CacheTester {
 
     public static void main(String[] args) throws Exception {
 
-        {
+/*        {
 
             Cache<String, String> cache = new Cache<>();
 
@@ -24,13 +24,16 @@ public class CacheTester {
 
             System.out.println(cache);
 
-        }
+        } */
 
         {
             List<String> keys = new ArrayList<>();
             keys.add("Key1");
 
-            Cache<String, String> cache = new Cache<>(keys);
+            List<String> nukeys = new ArrayList<>();
+            nukeys.add("NUKey1");
+
+            Cache<String, String> cache = new Cache<>(keys,nukeys);
 
             UserTransaction ut = Context.getUserTransaction();
 
@@ -40,13 +43,18 @@ public class CacheTester {
             List<Tuple<String,String>> tuples = new ArrayList<>();
             tuples.add(t);
 
-            cache.put("Hello", "World",tuples);
+            Tuple<String,String> t1 = new Tuple<>("NUKey1" , "NUTrial");
+            List<Tuple<String,String>> tuples1 = new ArrayList<>();
+            tuples1.add(t1);
+
+            cache.put("Hello", "World",tuples, tuples1);
 
          //   ut.rollback();
 
             ut.commit();
 
-            System.out.println(cache.getUsingSecKey("Key1","Trial"));
+            System.out.println(cache.getUsingSecKey("Key1", "Trial"));
+            System.out.println(cache.getUsingSecNUKey("NUKey1", "NUTrial"));
 
             System.out.println(cache);
 
