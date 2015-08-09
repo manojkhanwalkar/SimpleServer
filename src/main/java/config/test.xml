@@ -10,6 +10,7 @@
     <bean id="ServiceList" class="server.ServiceList">
         <property name="listServices">
             <list>
+                <ref bean="CacheService"/>
    <!--            <ref bean="DBService" />
                 <ref bean="RestService" />
                <ref bean="DBQueryTest" /> -->
@@ -30,15 +31,25 @@
         <property name="clusterName" value="cluster1" />
         <property name="snapShotInterval" value="5000" />
 
+    </bean> -->
+
+
+    <bean id="CacheService" class="cache.CacheService">
+        <property name="name" value="CacheService" />
+        <property name ="caches" >
+            <map>
+                <entry key="MyCache" value-ref="MyCache"/>
+            </map>
+
+        </property>
+
+    </bean>
+
+    <bean id="MyCache" class="cache.Cache">
+
     </bean>
 
 
-    <bean id="RestService" class="columndb.RestService">
-        <property name="name" value="RestService" />
-        <property name="restConfigName" value="/Users/mkhanwalkar/ColumnDB/src/main/java/rest/configuration.yml" />
-
-    </bean>
--->
 
 </beans>
 
