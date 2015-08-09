@@ -46,6 +46,8 @@ public class CacheTester {
 
             ut.commit();
 
+            System.out.println(cache.getUsingSecKey("Key1","Trial"));
+
             System.out.println(cache);
 
         }
