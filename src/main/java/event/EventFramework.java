@@ -26,20 +26,44 @@ public class EventFramework {
 
      Thread handoffWorker =null;
 
-    public EventFramework()
-    {
-        // TODO - remove this
-    }
 
     EventFactory factory;
 
-    public EventFramework(Mode mode, Balancer balancer, Processor processor, EventFactory factory)
-    {
-        this.mode = mode ;
+    public void setMode(Mode mode) {
+        this.mode = mode;
+    }
+
+    public void setBalancer(Balancer balancer) {
+        this.balancer = balancer;
         this.numQueues = balancer.getNumberOfQueues();
-        this.balancer = balancer ;
+    }
+
+    public void setProcessor(Processor processor) {
         this.processor = processor;
-        this.factory = factory ;
+    }
+
+    public void setFactory(EventFactory factory) {
+        this.factory = factory;
+    }
+
+    public EventFramework()
+    {
+            init();
+
+    }
+
+
+    public EventFramework(Mode mode, Balancer balancer, Processor processor, EventFactory factory) {
+        this.mode = mode;
+        this.numQueues = balancer.getNumberOfQueues();
+        this.balancer = balancer;
+        this.processor = processor;
+        this.factory = factory;
+        init();
+    }
+
+    public void init()
+    {
 
        // EnumSet
         if (mode == Mode.Handoff)

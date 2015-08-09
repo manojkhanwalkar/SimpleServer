@@ -62,10 +62,22 @@
     </bean>
 
     <bean id="InputEF" class="event.EventFramework">
+        <property name="mode" value="Handoff" />
+        <property name="balancer" ref="RRBalancer" />
+        <property name="processor" ref="TestProcessor" />
+        <property name="factory" ref = "Factory"/>
 
     </bean>
 
+    <bean id="RRBalancer" class="event.RoundRobinLoadBalancer">
+    <constructor-arg value="10"/>
+    </bean>
 
+    <bean id="TestProcessor" class="trial.ProcessorTester">
+    </bean>
+
+    <bean id="Factory" class="trial.MyStringMessage">
+    </bean>
 
 
 </beans>
