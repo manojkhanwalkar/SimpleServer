@@ -11,9 +11,10 @@
         <property name="listServices">
             <list>
                 <ref bean="CacheService"/>
-   <!--            <ref bean="DBService" />
-                <ref bean="RestService" />
-               <ref bean="DBQueryTest" /> -->
+                <ref bean="EFService"/>
+                <!--            <ref bean="DBService" />
+                             <ref bean="RestService" />
+                            <ref bean="DBQueryTest" /> -->
             </list>
         </property>
 
@@ -48,6 +49,22 @@
     <bean id="MyCache" class="cache.Cache">
 
     </bean>
+
+    <bean id="EFService" class="event.EventFrameworkService">
+        <property name="name" value="CacheService" />
+        <property name ="frameworks" >
+            <map>
+                <entry key="Input" value-ref="InputEF"/>
+            </map>
+
+        </property>
+
+    </bean>
+
+    <bean id="InputEF" class="event.EventFramework">
+
+    </bean>
+
 
 
 

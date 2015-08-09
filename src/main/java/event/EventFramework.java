@@ -24,7 +24,12 @@ public class EventFramework {
 
     final int capacity = 8;
 
-    final Thread handoffWorker ;
+     Thread handoffWorker =null;
+
+    public EventFramework()
+    {
+        // TODO - remove this
+    }
 
     EventFactory factory;
 
