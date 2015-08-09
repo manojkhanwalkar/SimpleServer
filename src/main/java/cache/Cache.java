@@ -7,6 +7,7 @@ import txn.TransactionalResource;
 import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -18,25 +19,70 @@ public class Cache<K,V> implements TransactionalResource {
     ThreadLocal<Map<K, V>> localMap  = new ThreadLocal<>();
     ConcurrentMap<K,Long> locks = new ConcurrentHashMap<>();
 
+    Map<String,ConcurrentMap<K, V>> secKeyMap ; //= new HashMap<>();
+    ThreadLocal<Map<String,Map<K, V>>> localSecMap  = new ThreadLocal<>();
+
+//TODO - generated cache code will be far more efficient for multiple keys .
+
+    //TODO - create a secondary unique key functionality in the cache .
+
     public Cache()
     {
 
 
     }
 
+    public Cache(List<String> secondaryKeys)
+    {
+         secKeyMap = new HashMap<>();
+        secondaryKeys.stream().forEach(key->{
+
+            secKeyMap.put(key,new ConcurrentHashMap<>());
+        });
+    }
+
+
+
+
+    public V getUsingSecKey(String keyType,K key)
+    {
+
+        Map<String,Map<K, V>> txnMap = localSecMap.get();
+        if (txnMap!=null)
+        {
+            Map<K, V> txnMap1 = txnMap.get(keyType);
+             V kv = txnMap1.get(key);
+             if (kv!=null)
+                 return kv;
+        }
+
+        ConcurrentMap<K, V> tmp = secKeyMap.get(keyType);
+        if (tmp!=null)
+        {
+            return tmp.get(key) ;
+        }
+        else
+            return null;
+
+
+
+
+    }
 
     public V get(K key)
     {
         Map<K, V> txnMap = localMap.get();
         if (txnMap!=null)
         {
-             V kv = txnMap.get(key);
-             if (kv!=null)
-                 return kv;
+            V kv = txnMap.get(key);
+            if (kv!=null)
+                return kv;
         }
 
         return map.get(key) ;
     }
+
+
 
     public void put(K key , V obj) throws KeyLockedException
     {
