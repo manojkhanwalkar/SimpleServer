@@ -9,6 +9,7 @@ import javax.transaction.SystemException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -22,6 +23,10 @@ public class Cache<K,V> implements TransactionalResource {
     Map<String,ConcurrentMap<K, V>> secKeyMap ; //= new HashMap<>();
     ThreadLocal<Map<K,Map<K, V>>> localSecMap  = new ThreadLocal<>();
 
+    Map<String,ConcurrentMap<K, Set<V>>> secNUKeyMap ; //= new HashMap<>();
+    ThreadLocal<Map<K,Map<K, Set<V>>>> localSecNUMap  = new ThreadLocal<>();
+
+
 //TODO - generated cache code will be far more efficient for multiple keys .
 
     //TODO - create a secondary unique key functionality in the cache .
@@ -32,13 +37,20 @@ public class Cache<K,V> implements TransactionalResource {
 
     }
 
-    public Cache(List<String> secondaryKeys)
+    public Cache(List<String> secondaryKeys, List<String> secNonUniqueKeys)
     {
          secKeyMap = new HashMap<>();
         secondaryKeys.stream().forEach(key->{
 
             secKeyMap.put(key,new ConcurrentHashMap<>());
         });
+
+        secNUKeyMap = new HashMap<>();
+        secNonUniqueKeys.stream().forEach(key->{
+
+            secNUKeyMap.put(key,new ConcurrentHashMap<>());
+        });
+
     }
 
 
@@ -68,6 +80,33 @@ public class Cache<K,V> implements TransactionalResource {
 
 
     }
+
+    public Set<V> getUsingSecNUKey(K keyType,K key)
+    {
+
+        Map<K,Map<K, Set<V>>> txnMap = localSecNUMap.get();
+        if (txnMap!=null)
+        {
+            Map<K, Set<V>> txnMap1 = txnMap.get(keyType);
+            Set<V> kv = txnMap1.get(key);
+            if (kv!=null)
+                return kv;
+        }
+
+        ConcurrentMap<K, Set<V>> tmp = secNUKeyMap.get(keyType);
+        if (tmp!=null)
+        {
+            return tmp.get(key) ;
+        }
+        else
+            return null;
+
+
+
+
+    }
+
+
 
     public V get(K key)
     {
@@ -153,7 +192,7 @@ public class Cache<K,V> implements TransactionalResource {
 
         txnMap.put(key,obj);
 
-        // Add the sec keys
+        // Add the sec unique keys
         secKeyInfo.stream().forEach(t->{
             K keyType = t.getKeyType();
             K keyValue = t.getKeyValue();
@@ -188,48 +227,60 @@ public class Cache<K,V> implements TransactionalResource {
         Map<K,Map<K, V>> tmp = localSecMap.get();
         if (tmp!=null)
             tmp.clear();
+        Map<K,Map<K, Set<V>>> tmp1 = localSecNUMap.get();
+        if (tmp1!=null)
+            tmp1.clear();
 
 
     }
 
-    /*
-
-            if (tmp==null)
-            {
-                tmp = new HashMap<K, Map<K, V>>();
-                localSecMap.set(tmp);
-            }
-
-            Map<K, V> tmp1 = tmp.get(keyType);
-            if (tmp1==null)
-            {
-                tmp1= new HashMap<K, V>();
-                tmp.put(keyType,tmp1);
-            }
-            tmp1.put(keyValue,obj);
-
-     */
 
     public void commit()
     {
-        Map<K,Map<K, V>> tmp = localSecMap.get();
+        {
+            Map<K, Map<K, V>> tmp = localSecMap.get();
+            if (tmp != null) {
+                for (Map.Entry<K, Map<K, V>> locentry : tmp.entrySet()) {
+                    Map<K, V> entry = secKeyMap.get(locentry.getKey());
+                    if (entry != null) {
+                        for (Map.Entry<K, V> locentry1 : locentry.getValue().entrySet())  // should have only one entry
+                        {
+
+                            entry.put(locentry1.getKey(), locentry1.getValue());
+                        }
+                    }
+                }
+
+                tmp.clear();
+
+            }
+        }
+
+        Map<K,Map<K, Set<V>>> tmp = localSecNUMap.get();
         if (tmp!=null)
         {
-            for (Map.Entry<K,Map<K, V>> locentry : tmp.entrySet())
+            for (Map.Entry<K,Map<K, Set<V>>> locentry : tmp.entrySet())
             {
-                Map<K, V> entry = secKeyMap.get(locentry.getKey());
+                Map<K, Set<V>> entry = secNUKeyMap.get(locentry.getKey());
                 if (entry!=null)
                 {
-                    for (Map.Entry<K, V> locentry1 : locentry.getValue().entrySet())  // should have only one entry
+                    for (Map.Entry<K, Set<V>> locentry1 : locentry.getValue().entrySet())
                     {
-
-                        entry.put(locentry1.getKey(),locentry1.getValue());
+                        Set<V> entry1 = entry.get(locentry1.getKey());
+                        if (entry1==null) {
+                            entry.put(locentry1.getKey(), locentry1.getValue());
+                        }
+                        else
+                        {
+                            entry1.addAll(locentry1.getValue());
+                        }
                     }
                 }
             }
 
-        }
+            tmp.clear();
 
+        }
 
 
         Map<K,V> txnMap = localMap.get();
@@ -252,29 +303,69 @@ public class Cache<K,V> implements TransactionalResource {
         return "Cache{" +
                 "map=" + map +
                 ", secKeyMap=" + secKeyMap +
+                ", secNUKeyMap=" + secNUKeyMap +
                 '}';
     }
-
-/*  public List<DataContainer> getData()
+/*
+  public void put(K key , V obj, List<Tuple<K,K>> secKeyInfo) throws KeyLockedException
     {
-        List<DataContainer> containers = new ArrayList<>();
-        Map<Key, KeyedValue> txnMap = localMap.get();
-        if (txnMap!=null)
-        {
-            for (Map.Entry<Key, KeyedValue> entry : txnMap.entrySet())
-            {
-                DataContainer container = new DataContainer();
-                container.setContents(entry.getValue().getBytes());
-                containers.add(container);
-            }
+        try {
+            TransactionImpl transaction = (TransactionImpl) Context.getTransactionManager().getTransaction();
+            transaction.enlistResource(this);
+        } catch (SystemException e) {
+            e.printStackTrace();
+        } catch (RollbackException e) {
+            e.printStackTrace();
         }
 
-        return containers;
+        // this logic makes it re-entrant for the current thread .
+        // assume lock only on the primary key .
+        long currVal = Thread.currentThread().getId();
+
+        Long val = locks.putIfAbsent(key,new Long(currVal));
+
+        if (val!=null && currVal!=val)
+        {
+            throw new KeyLockedException(key.toString());
+        }
+
+        // map.put(k,obj);
+        Map<K, V> txnMap = localMap.get();
+        if (txnMap==null)
+        {
+            txnMap = new HashMap<>();
+            localMap.set(txnMap);
+        }
+
+        txnMap.put(key,obj);
+
+        // Add the sec keys
+        secKeyInfo.stream().forEach(t->{
+            K keyType = t.getKeyType();
+            K keyValue = t.getKeyValue();
+      //      ThreadLocal<Map<String,Map<K, V>>> localSecMap  = new ThreadLocal<>();
+            Map<K,Map<K, V>> tmp = localSecMap.get();
+            if (tmp==null)
+            {
+                tmp = new HashMap<K, Map<K, V>>();
+                localSecMap.set(tmp);
+            }
+
+            Map<K, V> tmp1 = tmp.get(keyType);
+            if (tmp1==null)
+            {
+                tmp1= new HashMap<K, V>();
+                tmp.put(keyType,tmp1);
+            }
+            tmp1.put(keyValue,obj);
 
 
-    } */
+        });
 
 
+    }
+
+ */
 
 
 }
