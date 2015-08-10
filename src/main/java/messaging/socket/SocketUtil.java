@@ -24,8 +24,7 @@ public class SocketUtil {
 
             buffer.clear();
         } catch (IOException e) {
-            //TODO - handle socket cleaning here
-            //e.printStackTrace();
+            e.printStackTrace();
 
         }
 
@@ -73,9 +72,8 @@ public class SocketUtil {
         }*/
         } catch (IOException e) {
 
+            e.printStackTrace();
             return -1;
-           // e.printStackTrace();
-            //TODO - handle socket cleaning here
         }
 
         return 0; // ok
