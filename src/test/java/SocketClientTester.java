@@ -7,11 +7,8 @@ import java.nio.channels.SocketChannel;
  * Created by mkhanwalkar on 5/1/15.
  */
 
-//TODO - LMax events to be exposed via service layer
-
     // TODO - common messaging api over REST , Sockets and Rabbit
     //TODO - messaging handoff to event layer if configured in that fashion .
-    //TODO - tie Lmax to txn implicitly .
     // TODO - tie a persistence manager to cache via the txn layer
 
 
