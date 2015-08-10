@@ -26,7 +26,6 @@ public class Cache<K,V> implements TransactionalResource {
 
 //TODO - generated cache code will be far more efficient for multiple keys .
 
-    //TODO - create a secondary unique key functionality in the cache .
 
     public Cache()
     {
