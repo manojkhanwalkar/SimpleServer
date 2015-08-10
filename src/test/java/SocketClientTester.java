@@ -8,7 +8,7 @@ import java.nio.channels.SocketChannel;
  */
 
     // TODO - common messaging api over REST , Sockets and Rabbit
-    //TODO - messaging handoff to event layer if configured in that fashion .
+    //TODO - socket messaging handoff to event layer if configured in that fashion .
     // TODO - tie a persistence manager to cache via the txn layer
 
 
