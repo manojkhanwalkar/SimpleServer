@@ -13,7 +13,10 @@ public class EventFramework {
     Mode mode;
     int numQueues;
     Balancer balancer;
-    Processor processor;
+    ProcessorWrapper  processorWrapper = new ProcessorWrapper();
+
+  //  Processor  processor;
+
     final SynchronousQueue<Message> queue = new SynchronousQueue<Message>();
 
     List<BlockingQueue<Message>> queues ;
@@ -39,7 +42,7 @@ public class EventFramework {
     }
 
     public void setProcessor(Processor processor) {
-        this.processor = processor;
+        processorWrapper.setProcessor(processor);
     }
 
     public void setFactory(EventFactory factory) {
@@ -57,13 +60,14 @@ public class EventFramework {
         this.mode = mode;
         this.numQueues = balancer.getNumberOfQueues();
         this.balancer = balancer;
-        this.processor = processor;
+        processorWrapper.setProcessor(processor);
         this.factory = factory;
         init();
     }
 
     public void init()
     {
+
 
        // EnumSet
         if (mode == Mode.Handoff)
@@ -72,7 +76,7 @@ public class EventFramework {
                 try {
                     while(true) {
                         Message message = queue.take();
-                        processor.process(message);
+                        processorWrapper.process(message);
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -100,7 +104,7 @@ public class EventFramework {
                     try {
                         while(true) {
                             Message message = q.take();
-                            processor.process(message);
+                            processorWrapper.process(message);
                         }
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -118,7 +122,7 @@ public class EventFramework {
           //  executors = new ArrayList<>();
             for (int i=0;i<numQueues;i++)
             {
-                LMaxQueue<Message> lq = new LMaxQueue<Message>(capacity,processor,factory);
+                LMaxQueue<Message> lq = new LMaxQueue<Message>(capacity,processorWrapper,factory);
                 lqueues.add(lq);
 
             }
@@ -133,7 +137,7 @@ public class EventFramework {
         switch(mode)
         {
             case Sync:
-                processor.process(message);
+                processorWrapper.process(message);
                 break ;
             case Handoff:
                 try {

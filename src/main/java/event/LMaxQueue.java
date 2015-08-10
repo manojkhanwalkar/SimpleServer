@@ -18,11 +18,11 @@ public class LMaxQueue<T> implements EventHandler<T> {
 
     int bufSize ;
 
-    Processor processor ;
+    ProcessorWrapper processor ;
 
     EventFactory factory; // = new MyStringMessage();
 
-    public LMaxQueue(int bufSize, Processor processor, EventFactory factory)
+    public LMaxQueue(int bufSize, ProcessorWrapper processor, EventFactory factory)
     {
         this.bufSize = bufSize;
         this.processor = processor;
