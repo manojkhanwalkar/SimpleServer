@@ -1,5 +1,10 @@
 package messaging;
 
+import messaging.socket.SocketUtil;
+
+import java.nio.channels.SelectionKey;
+import java.nio.channels.SocketChannel;
+
 public class MessagingTuple {
 
     String name ;
@@ -7,6 +12,16 @@ public class MessagingTuple {
     Initiator initiator ;
 
     Acceptor acceptor ;
+
+    SocketChannel channel ;
+
+    public SocketChannel getChannel() {
+        return channel;
+    }
+
+    public void setChannel(SocketChannel channel) {
+        this.channel = channel;
+    }
 
     public String getName() {
         return name;
@@ -30,6 +45,19 @@ public class MessagingTuple {
 
     public void setAcceptor(Acceptor acceptor) {
         this.acceptor = acceptor;
+    }
+
+    public void processMessage(SelectionKey key)
+    {
+        int ret = SocketUtil.read(channel);
+        if (ret!=-1 )
+            SocketUtil.write(channel,"Received message");
+        else
+        {
+            key.cancel();
+
+        }
+
     }
 
 

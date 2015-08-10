@@ -1,5 +1,6 @@
 package messaging.socket;
 
+import messaging.MessagingTuple;
 import messaging.TransportEndPoint;
 
 import java.io.IOException;
@@ -54,14 +55,22 @@ public class SocketEndPoint implements TransportEndPoint {
                         }
                         if (key.isReadable())
                         {
-                            SocketChannel server = (SocketChannel) key.channel();
-                            int ret = SocketUtil.read(server);
-                            if (ret!=-1 )
-                                SocketUtil.write(server,"Received message");
+                            MessagingTuple tuple ;
+                            Object attachment = key.attachment();
+                            if (attachment==null)
+                            {
+                                SocketChannel server = (SocketChannel) key.channel();
+                                tuple = new MessagingTuple();
+                                tuple.setChannel(server);
+                                key.attach(tuple);
+                            }
                             else
                             {
-                                key.cancel();
+                                tuple = (MessagingTuple)attachment;
                             }
+
+                            tuple.processMessage(key);
+
 
                         }
                         selectedKeys.remove(key);
