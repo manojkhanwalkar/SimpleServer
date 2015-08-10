@@ -18,10 +18,6 @@ public class EventTester {
 
         Thread.sleep(1000);
 
-    /*    Predicate<Integer>  mint = x-> x>5;
-
-        System.out.println(mint.test(5) );*/
-
 
 
     }
