@@ -1,4 +1,4 @@
-package socket;
+import messaging.socket.SocketUtil;
 
 import java.net.InetSocketAddress;
 import java.nio.channels.SocketChannel;
@@ -16,7 +16,7 @@ import java.nio.channels.SocketChannel;
     // TODO - tie a persistence manager to cache via the txn layer
 
 
-public class Client {
+public class SocketClientTester {
 
     public static void main (String [] args)
             throws Exception {
@@ -32,7 +32,7 @@ public class Client {
 
         for (int i = 0; i < messages.length; i++) {
 
-            SocketUtil.write(client,messages[i]);
+            SocketUtil.write(client, messages[i]);
             SocketUtil.read(client);
 
 

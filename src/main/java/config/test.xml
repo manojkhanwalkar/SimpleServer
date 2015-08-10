@@ -12,27 +12,28 @@
             <list>
                 <ref bean="CacheService"/>
                 <ref bean="EFService"/>
-                <!--            <ref bean="DBService" />
-                             <ref bean="RestService" />
-                            <ref bean="DBQueryTest" /> -->
+                <ref bean="MessagingService"/>
             </list>
         </property>
 
     </bean>
 
-  <!-- <bean id="DBService" class="columndb.DBService">
-        <property name="location" value="/tmp/" />
-        <property name="dbNames">
-            <list>
-                <value>db1</value>
-                <value>db2</value>
-            </list>
-        </property>
-        <property name="name" value="DBService" />
-        <property name="clusterName" value="cluster1" />
-        <property name="snapShotInterval" value="5000" />
+    <bean id="MessagingService" class="messaging.MessagingService">
+        <property name="name" value="MessagingService" />
+        <property name ="messageEndPoints" >
+            <map>
+                <entry key="Socket" value-ref="Socket"/>
+            </map>
 
-    </bean> -->
+        </property>
+
+    </bean>
+
+    <bean id="Socket" class="messaging.socket.SocketEndPoint">
+        <property name="port" value="9999" />
+    </bean>
+
+
 
 
     <bean id="CacheService" class="cache.CacheService">

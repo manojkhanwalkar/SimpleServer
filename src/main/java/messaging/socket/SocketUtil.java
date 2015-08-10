@@ -1,4 +1,4 @@
-package socket;
+package messaging.socket;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
