@@ -76,6 +76,7 @@ public class SocketEndPoint implements TransportEndPoint {
                                 SocketChannel server = (SocketChannel) key.channel();
                                 tuple = new MessagingTuple();
                                 tuple.setChannel(server);
+                                tuple.setSelector(selector);
                                 key.attach(tuple);
                             }
                             else
@@ -83,14 +84,20 @@ public class SocketEndPoint implements TransportEndPoint {
                                 tuple = (MessagingTuple)attachment;
                             }
 
+
+                            key.interestOps(key.interestOps()^SelectionKey.OP_READ);
+
+                            tuple.setKey(key);
+
+
                             //TODO - this has to be passed to EF . Remember to cancel and re-enable the read key for this to work.
 
 
                             //eventFramework.sendMessage(new MyStringMessage("Hello from socket end point"));
 
-                            tuple.processMessage(key);
 
                             eventFramework.sendMessage(new MessagingTupleWrapper(tuple));
+
 
 
                         }

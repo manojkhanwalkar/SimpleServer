@@ -3,7 +3,9 @@ package messaging;
 import event.Message;
 import messaging.socket.SocketUtil;
 
+import java.nio.channels.ClosedChannelException;
 import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 
 public class MessagingTuple {
@@ -50,12 +52,14 @@ public class MessagingTuple {
         this.acceptor = acceptor;
     }
 
-    public void processMessage(SelectionKey key)
+
+
+    public void processMessage()
     {
         int ret = SocketUtil.read(channel);
         if (ret!=-1 )
             SocketUtil.write(channel,"Received message");
-        else
+      else
         {
             key.cancel();
 
@@ -64,6 +68,28 @@ public class MessagingTuple {
     }
 
 
+    SelectionKey key ;
+    public void setKey(SelectionKey key) {
 
+        this.key = key;
 
+    }
+
+    Selector selector ;
+    public void setSelector(Selector selector) {
+
+        this.selector = selector ;
+
+    }
+
+    public void enableKey() {
+
+//        key.interestOps(SelectionKey.OP_READ);
+
+        if (key.isValid()) {
+            key.interestOps(key.interestOps() ^ SelectionKey.OP_READ);
+            selector.wakeup();
+        }
+
+    }
 }

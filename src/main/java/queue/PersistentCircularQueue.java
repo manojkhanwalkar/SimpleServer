@@ -78,7 +78,7 @@ public class PersistentCircularQueue {
 
             readyForWrite=true;
 
-         //   Thread.sleep(5000);
+            Thread.sleep(5000);
 
 
         } catch (Exception e) {
@@ -112,7 +112,7 @@ public class PersistentCircularQueue {
 
             readyForRead = true ;
 
-           // Thread.sleep(5000);
+            Thread.sleep(5000);
 
 
         } catch (Exception e) {

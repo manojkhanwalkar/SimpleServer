@@ -1,15 +1,23 @@
 package trial;
 
 import event.Processor;
+import messaging.MessagingTuple;
+import messaging.MessagingTupleWrapper;
 
-/**
- * Created by mkhanwalkar on 5/5/15.
- */
 public class ProcessorTester<T> implements Processor<T> {
 
     @Override
     public void process(T message) {
 
         System.out.println(message  + "  " + Thread.currentThread().getName());
+
+        MessagingTupleWrapper wrapper = (MessagingTupleWrapper) message;
+
+        MessagingTuple tuple = (MessagingTuple)wrapper.getObject();
+
+        tuple.processMessage();
+
+        tuple.enableKey();
+
     }
 }
