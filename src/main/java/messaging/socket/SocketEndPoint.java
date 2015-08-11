@@ -1,7 +1,10 @@
 package messaging.socket;
 
+import event.EventFramework;
+import event.Message;
 import messaging.MessagingTuple;
 import messaging.TransportEndPoint;
+import trial.MyStringMessage;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -24,6 +27,16 @@ public class SocketEndPoint implements TransportEndPoint {
 
     public void setPort(int port) {
         this.port = port;
+    }
+
+    EventFramework eventFramework;
+
+    public EventFramework getEventFramework() {
+        return eventFramework;
+    }
+
+    public void setEventFramework(EventFramework eventFramework) {
+        this.eventFramework = eventFramework;
     }
 
     @Override
@@ -68,6 +81,11 @@ public class SocketEndPoint implements TransportEndPoint {
                             {
                                 tuple = (MessagingTuple)attachment;
                             }
+
+                            //TODO - this has to be passed to EF . Remember to cancel and re-enable the read key for this to work.
+
+
+                            eventFramework.sendMessage(new MyStringMessage("Hello from socket end point"));
 
                             tuple.processMessage(key);
 

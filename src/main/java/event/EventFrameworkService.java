@@ -28,7 +28,11 @@ public class EventFrameworkService implements Service {
     @Override
     public void init() {
 
-        System.out.println(frameworks);
+        frameworks.values().stream().forEach(ef->{
+            ef.init();
+        });
+
+       // System.out.println(frameworks);
 
     }
 
