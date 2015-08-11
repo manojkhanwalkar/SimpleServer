@@ -44,7 +44,7 @@ public class LMaxQueue<T> implements EventHandler<T> {
         long sequence = ringBuffer.next();  // Grab the next sequence
         Message event = (Message)ringBuffer.get(sequence);
 
-        event.setString(((Message)t).getString());
+        event.setObject(((Message)t).getObject());
 
         ringBuffer.publish(sequence);
     }

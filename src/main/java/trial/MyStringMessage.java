@@ -20,13 +20,13 @@ public class MyStringMessage implements Message, EventFactory<MyStringMessage> {
         this.s = s;
     }
 
-    public void setString(String s)
+    public void setObject(Object o)
     {
-        this.s = s;
+        this.s = (String)o;
     }
 
     @Override
-    public String getString() {
+    public Object getObject() {
         return s;
     }
 

@@ -5,7 +5,7 @@ package event;
  */
 public interface Message {
 
-    public void setString(String s);
+    public void setObject(Object obj);
 
-    public String getString();
+    public Object getObject();
 }
