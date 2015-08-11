@@ -3,6 +3,7 @@ package messaging.socket;
 import event.EventFramework;
 import event.Message;
 import messaging.MessagingTuple;
+import messaging.MessagingTupleWrapper;
 import messaging.TransportEndPoint;
 import trial.MyStringMessage;
 
@@ -85,9 +86,11 @@ public class SocketEndPoint implements TransportEndPoint {
                             //TODO - this has to be passed to EF . Remember to cancel and re-enable the read key for this to work.
 
 
-                            eventFramework.sendMessage(new MyStringMessage("Hello from socket end point"));
+                            //eventFramework.sendMessage(new MyStringMessage("Hello from socket end point"));
 
                             tuple.processMessage(key);
+
+                            eventFramework.sendMessage(new MessagingTupleWrapper(tuple));
 
 
                         }
