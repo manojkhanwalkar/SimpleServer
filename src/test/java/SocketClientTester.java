@@ -26,13 +26,16 @@ public class SocketClientTester {
 
         String [] messages = new String [] {"Time goes fast.", "What now?", "Bye."};
 
-        for (int i = 0; i < messages.length; i++) {
+        for (int j=0;j<10000;j++) {
 
-            SocketUtil.write(client, messages[i]);
-            SocketUtil.read(client);
+            for (int i = 0; i < messages.length; i++) {
+
+                SocketUtil.write(client, messages[i]);
+                SocketUtil.read(client);
 
 
-            Thread.sleep(3000);
+                // Thread.sleep(3000);
+            }
         }
 
         client.close();
