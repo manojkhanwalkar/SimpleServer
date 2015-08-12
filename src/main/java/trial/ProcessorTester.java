@@ -11,13 +11,17 @@ public class ProcessorTester<T> implements Processor<T> {
 
         System.out.println(message  + "  " + Thread.currentThread().getName());
 
-        MessagingTupleWrapper wrapper = (MessagingTupleWrapper) message;
+        if (message instanceof MessagingTupleWrapper) {
 
-        MessagingTuple tuple = (MessagingTuple)wrapper.getObject();
+            MessagingTupleWrapper wrapper = (MessagingTupleWrapper) message;
 
-        tuple.processMessage();
+            MessagingTuple tuple = (MessagingTuple) wrapper.getObject();
 
-        tuple.enableKey();
+            tuple.processMessage();
+
+            tuple.enableKey();
+        }
+
 
     }
 }

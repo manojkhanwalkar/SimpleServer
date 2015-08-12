@@ -32,11 +32,17 @@
 
     <bean id="Rabbit-1" class="messaging.rabbit.ConnectionInitiator">
         <property name="delegate" ref="RabbitDelegate" />
-        <property name ="listeners" >
+     <!--   <property name ="listeners" >
             <map>
                 <entry key="hello" value-ref="HelloListener"/>
             </map>
 
+        </property> -->
+        <property name="eventFramework" ref="InputEF" />
+        <property name="queueNames">
+            <list>
+                <value>hello</value>
+            </list>
         </property>
 
     </bean>
