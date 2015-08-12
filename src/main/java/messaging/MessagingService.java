@@ -15,6 +15,11 @@ public class MessagingService  implements Service {
         return messageEndPoints;
     }
 
+    public TransportEndPoint getMessageEndPoint(String name)
+    {
+        return messageEndPoints.get(name);
+    }
+
     public void setMessageEndPoints(Map<String, TransportEndPoint> messageEndPoints) {
         this.messageEndPoints = messageEndPoints;
     }
