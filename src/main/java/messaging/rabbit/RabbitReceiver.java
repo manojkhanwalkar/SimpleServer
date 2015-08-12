@@ -2,7 +2,7 @@ package messaging.rabbit;
 
 import com.rabbitmq.client.*;
 import event.Message;
-import test.MyStringMessage;
+import trial.MyStringMessage;
 
 import java.io.IOException;
 

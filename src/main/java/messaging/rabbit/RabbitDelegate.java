@@ -79,7 +79,7 @@ public class RabbitDelegate implements Delegate {
         Channel channel = null;
         try {
              channel = channels.take();
-             channel.basicPublish("", queue, null, message.getString().getBytes());
+             channel.basicPublish("", queue, null, message.getObject().toString().getBytes());
         } catch (Exception e) {
             e.printStackTrace();
         } finally
