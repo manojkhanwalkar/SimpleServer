@@ -23,17 +23,35 @@
         <property name ="messageEndPoints" >
             <map>
                 <entry key="Socket" value-ref="Socket"/>
+                <entry key="Rabbit-1" value-ref="Rabbit-1"/>
             </map>
 
         </property>
 
     </bean>
 
+    <bean id="Rabbit-1" class="messaging.rabbit.ConnectionInitiator">
+        <property name="delegate" ref="RabbitDelegate" />
+        <property name ="listeners" >
+            <map>
+                <entry key="hello" value-ref="HelloListener"/>
+            </map>
+
+        </property>
+
+    </bean>
+
+    <bean id="HelloListener" class="trial.MyListener">
+    </bean>
+
+    <bean id="RabbitDelegate" class="messaging.rabbit.RabbitDelegate">
+    </bean>
+
+
     <bean id="Socket" class="messaging.socket.SocketEndPoint">
         <property name="port" value="9999" />
         <property name="eventFramework" ref="InputEF" />
     </bean>
-
 
 
 
