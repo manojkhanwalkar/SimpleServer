@@ -11,9 +11,10 @@ public class Producer {
         this.queue = queue;
     }
 
-    public boolean put(String message)
+    public void put(String message)
     {
-       return  queue.put(message.getBytes());
+
+         queue.put(message.getBytes());
     }
 
 }
