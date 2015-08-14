@@ -20,12 +20,6 @@ public class PersistentQueueTester {
                 int count=0;
                 while(true) {
                     producer.put("Hello Mem Map world again " + count);
-                   // System.out.println(count++);
-                    try {
-                        Thread.sleep(50);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
                 }
 
             }
@@ -36,12 +30,10 @@ public class PersistentQueueTester {
         Thread reader = new Thread(() -> {
 
             Consumer consumer = queue.getConsumer();
-            int count =0;
             while(true) {
                 String s = consumer.read();
-                //System.out.println(s);
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(100);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

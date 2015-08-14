@@ -147,7 +147,7 @@ public class PersistentCircularQueue {
                     writeArea.put(EOR);
                     System.out.println("EOR written at " + head);
 
-                while (tail < numToWrite(bytes)) {
+                while (tail <= numToWrite(bytes)) {
                     try {
                         System.out.println("WAITING 1 !!!! " + head);
                         wait(100);
