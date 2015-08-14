@@ -8,7 +8,7 @@ import queue.Producer;
 public class PersistentQueueTester {
 
     public static void main(String[] args) throws Exception {
-        PersistentCircularQueue queue = new PersistentCircularQueue("test", 20000);
+        PersistentCircularQueue queue = new PersistentCircularQueue("test", 2000);
 
         queue.initQueueForWrite();
 
@@ -41,7 +41,7 @@ public class PersistentQueueTester {
                 String s = consumer.read();
                 //System.out.println(s);
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

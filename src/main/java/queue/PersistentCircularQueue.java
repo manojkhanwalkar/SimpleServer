@@ -68,8 +68,10 @@ public class PersistentCircularQueue {
 
 
             System.out.println("Next write location is " + head);
+            System.out.println("Next read location is " + tail);
 
 
+            Thread.sleep(5000);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -135,7 +137,7 @@ public class PersistentCircularQueue {
   synchronized void  put(byte[] bytes)
     {
         System.out.println("Current head posn" + head );
-        if (head>=tail) {
+        if (head>tail || (head==0 && tail==0)) {
 
             if (writeArea.capacity() - (head + numToWrite(bytes)) > 0) {
                 write(bytes);
@@ -147,6 +149,7 @@ public class PersistentCircularQueue {
 
                 while (tail < numToWrite(bytes)) {
                     try {
+                        System.out.println("WAITING 1 !!!! " + head);
                         wait(100);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -160,7 +163,7 @@ public class PersistentCircularQueue {
         else
         {
 
-            if (head+numToWrite(bytes)<=tail)
+            if (head+numToWrite(bytes)<tail)
             {
                 write(bytes);
             }
@@ -168,9 +171,10 @@ public class PersistentCircularQueue {
             {
                 if (writeArea.capacity() - (head + numToWrite(bytes)) > 0) // wait for tail to move ahead or wrap
                 {
-                    while (head < tail || head+numToWrite(bytes) > tail )
+                    while (head < tail &&  head+numToWrite(bytes) >= tail )
                     {
                         try {
+                            System.out.println("WAITING 2!!!! " + head );
                             wait(100);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
@@ -185,6 +189,7 @@ public class PersistentCircularQueue {
 
                     while (tail < numToWrite(bytes)) {
                         try {
+                            System.out.println("WAITING 3 !!!! " + head);
                             wait(100);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
