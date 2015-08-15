@@ -30,7 +30,6 @@ public class StoreService {
 
         stores.values().stream().forEach(store -> {
 
-            store = new MemStore("/tmp/", "test", 1000);
             store.setReadCallback(containers -> {
 
                 System.out.println(containers.toString());

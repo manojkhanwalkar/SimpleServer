@@ -2,6 +2,7 @@ package memlog;
 
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 public class DataContainer {
 
@@ -15,7 +16,7 @@ public class DataContainer {
 
     public void setContents(String s)
     {
-        this.contents = s.getBytes(Charset.forName("US_ASCII"));
+        this.contents = s.getBytes(Charset.forName("US-ASCII"));
         length = contents.length;
 
     }

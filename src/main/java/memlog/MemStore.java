@@ -24,7 +24,7 @@ public class MemStore {
     FileChannel fc;
 
 
-    public MemStore(String dir , String name, int size)
+     MemStore(String dir , String name, int size)
     {
         this.name = name;
         this.size = size ;
@@ -40,21 +40,6 @@ public class MemStore {
 
 
 
-    public void test()
-    {
-
-  /*      ByteBuffer buffer = log.getLog();
-
-        buffer.position(5); // eliminate the BOR and length
-
-        log = new TxnLog(buffer);
-
-        callback.notify(log.getDataContainers());
-
-
-*/
-
-    }
 
 
     public  void unmap(Buffer buffer) {
