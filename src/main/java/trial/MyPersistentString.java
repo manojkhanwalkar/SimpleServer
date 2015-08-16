@@ -1,6 +1,9 @@
 package trial;
 
 import memlog.PersistentResource;
+import memlog.ResourceRegistry;
+
+import java.lang.reflect.Method;
 
 /**
  * Created by mkhanwalkar on 8/15/15.
@@ -13,7 +16,21 @@ public class MyPersistentString extends PersistentResource {
 
     static
     {
-        setResourceId((char)100);
+        try {
+            setResourceId((char)101);
+            Class c = Class.forName("trial.MyPersistentString");
+            Method m = c.getMethod("fromBytes",byte[].class);
+
+            ResourceRegistry.getInstance().registerResource(resourceId,m);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public MyPersistentString() {
 
     }
 
@@ -45,7 +62,7 @@ public class MyPersistentString extends PersistentResource {
 
     public static PersistentResource fromBytes(byte[] bytes)
     {
-        return null;
+        return new MyPersistentString(bytes);
     }
 
     @Override

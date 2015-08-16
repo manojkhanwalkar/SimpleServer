@@ -1,5 +1,6 @@
 package memlog;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,23 +16,16 @@ public class ResourceRegistry {
         return registry ;
     }
 
-    Map<Character,String> resources = new HashMap<>();
+    Map<Character,Method> resources = new HashMap<>();
 
-    public void registerResource(int id , String className)
+    public void registerResource(int id , Method method)
     {
-        resources.put((char)id,className);
+        resources.put((char)id,method);
     }
 
-    public PersistentResource getResource(int id)
+    public Method getResource(int id)
     {
-        PersistentResource resource = null ;
-        try {
-           resource =(PersistentResource) Class.forName(resources.get((char)id)).newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return resource ;
+        return resources.get((char)id);
     }
 
 }

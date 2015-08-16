@@ -4,6 +4,8 @@ package memlog;
 import trial.MyNewPersistentString;
 import trial.MyPersistentString;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
@@ -43,19 +45,15 @@ public class DataContainer {
 
     public void setContents(byte[] contents)
     {
-        switch(type)
-        {
-            case 101:
-                resource = new MyPersistentString(contents); // TODO - needs to take into account type of resource and use from bytes call
-                break ;
-            case 100:
-                resource = new MyNewPersistentString(contents);
-                break ;
-            default :
-                System.out.println("Error");
 
+        try {
+            Method m = ResourceRegistry.getInstance().getResource(type);
+            resource = (PersistentResource)m.invoke(null,contents);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
         }
-
 
     }
 

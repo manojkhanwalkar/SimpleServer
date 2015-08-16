@@ -11,6 +11,11 @@ import trial.MyPersistentString;
 public class MemLogTester {
     public static void main(String[] args) {
 
+        // required to register the resource
+
+        MyPersistentString mps = new MyPersistentString();
+        MyNewPersistentString mnps = new MyNewPersistentString();
+
         StoreService service = StoreService.getInstance();
 
         service.addStore("test","/tmp/" , "memtest" , 1000 );
