@@ -46,7 +46,7 @@ public class DataContainer {
         switch(type)
         {
             case 101:
-                resource = new MyPersistentString(contents); // TODO - needs to take into account type of resource
+                resource = new MyPersistentString(contents); // TODO - needs to take into account type of resource and use from bytes call
                 break ;
             case 100:
                 resource = new MyNewPersistentString(contents);
