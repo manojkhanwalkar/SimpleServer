@@ -38,6 +38,7 @@ public class TxnLog {
             char type = buffer.getChar();
             buffer.get(b);
             DataContainer container = new DataContainer();
+            container.setType(type);
             container.setContents(b);
             dataContainers.add(container);
             if (buffer.get(buffer.position())==EOR)
@@ -66,7 +67,8 @@ public class TxnLog {
         for (DataContainer container : dataContainers)
         {
             buffer.putInt(container.getLength());
-            buffer.putChar(container.getType());
+            char c = container.getType();
+            buffer.putChar(c);
             buffer.put(container.getBytes());
         }
         buffer.put(EOR);

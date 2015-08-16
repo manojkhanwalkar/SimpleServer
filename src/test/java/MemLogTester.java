@@ -2,6 +2,7 @@ import memlog.DataContainer;
 import memlog.MemStore;
 import memlog.StoreService;
 import memlog.TxnLog;
+import trial.MyNewPersistentString;
 import trial.MyPersistentString;
 
 /**
@@ -37,7 +38,7 @@ public class MemLogTester {
             log.add(container);
 
             DataContainer container1 = new DataContainer();
-            container1.setResource(new MyPersistentString("Hello Mem Log World AGAIN " + i));
+            container1.setResource(new MyNewPersistentString("Hello Mem Log World AGAIN " + i));
 
             log.add(container1);
 

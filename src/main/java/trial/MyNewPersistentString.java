@@ -5,21 +5,21 @@ import memlog.PersistentResource;
 /**
  * Created by mkhanwalkar on 8/15/15.
  */
-public class MyPersistentString extends PersistentResource {
+public class MyNewPersistentString extends PersistentResource {
 
     String load ;
 
-    public MyPersistentString(String str)
+    public MyNewPersistentString(String str)
     {
         load = str;
         length = load.length();
-        setResourceId((char)101);
+        setResourceId((char)100);
     }
 
-    public MyPersistentString(byte[] contents) {
+    public MyNewPersistentString(byte[] contents) {
         load = new String(contents);
         length = load.length();
-        setResourceId((char)101);
+        setResourceId((char)100);
     }
 
     @Override
@@ -34,7 +34,7 @@ public class MyPersistentString extends PersistentResource {
 
     @Override
     public String toString() {
-        return "MyPersistentString{" +
+        return "MyNewPersistentString{" +
                 "load='" + load + '\'' +
                 '}';
     }
