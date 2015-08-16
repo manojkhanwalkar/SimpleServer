@@ -35,6 +35,7 @@ public class TxnLog {
         {
             int length = buffer.getInt();
             byte[] b = new byte[length];
+            char type = buffer.getChar();
             buffer.get(b);
             DataContainer container = new DataContainer();
             container.setContents(b);
@@ -47,7 +48,7 @@ public class TxnLog {
     public void add(DataContainer dataContainer)
     {
         dataContainers.add(dataContainer);
-        length=length+dataContainer.getLength()+4;
+        length=length+dataContainer.getLength()+4+2;
     }
 
 
@@ -65,6 +66,7 @@ public class TxnLog {
         for (DataContainer container : dataContainers)
         {
             buffer.putInt(container.getLength());
+            buffer.putChar(container.getType());
             buffer.put(container.getBytes());
         }
         buffer.put(EOR);

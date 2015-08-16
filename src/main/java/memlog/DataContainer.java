@@ -11,6 +11,11 @@ public class DataContainer {
 
     PersistentResource resource ;
 
+    public char getType()  // TODO = fix this later
+    {
+        return 1;
+    }
+
 //    byte[] contents;
 
     public byte[] getBytes()
