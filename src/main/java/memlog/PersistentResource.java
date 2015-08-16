@@ -2,16 +2,10 @@ package memlog;
 
 public abstract class PersistentResource {
 
-    private char resourceId;
     protected int length;
 
-    public final char getResourceId() {
-        return resourceId;
-    }
+   public abstract char getResourceId() ;
 
-    public final void setResourceId(char resourceId) {
-        this.resourceId = resourceId;
-    }
 
     public abstract byte[] getBytes();
 
@@ -29,11 +23,5 @@ public abstract class PersistentResource {
         this.length = length;
     }
 
-    @Override
-    public String toString() {
-        return "PersistentResource{" +
-                "resourceId=" + resourceId +
-                ", length=" + length +
-                '}';
-    }
+
 }
