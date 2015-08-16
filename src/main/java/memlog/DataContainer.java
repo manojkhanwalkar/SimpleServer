@@ -1,48 +1,44 @@
 package memlog;
 
 
+import trial.MyPersistentString;
+
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 public class DataContainer {
 
 
-    byte[] contents;
+    PersistentResource resource ;
+
+//    byte[] contents;
 
     public byte[] getBytes()
     {
-        return contents;
+        return resource.getBytes();
     }
 
-    public void setContents(String s)
-    {
-        this.contents = s.getBytes(Charset.forName("US-ASCII"));
-        length = contents.length;
-
+    public void setResource(PersistentResource resource) {
+        this.resource = resource;
     }
 
-    int length ;
 
     public int getLength()
     {
-        return length ;
+        return resource.getLength() ;
     }
 
     public void setContents(byte[] contents)
     {
-        this.contents = contents;
-       length = this.contents.length;
+        resource = new MyPersistentString(contents); // TODO - needs to take into account type of resource
+
 
     }
 
-    public String getContents()
-    {
-        return new String(contents);
+    @Override
+    public String toString() {
+        return "DataContainer{" +
+                "resource=" + resource +
+                '}';
     }
-
-    public String toString()
-    {
-        return getContents();
-    }
-
 }
