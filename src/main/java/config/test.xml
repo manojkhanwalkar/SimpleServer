@@ -55,6 +55,7 @@
 
 
     <bean id="Socket" class="messaging.socket.SocketEndPoint">
+        <property name="host" value="127.0.0.1" />
         <property name="port" value="9999" />
         <property name="eventFramework" ref="InputEF" />
     </bean>

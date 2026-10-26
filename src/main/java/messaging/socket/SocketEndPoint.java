@@ -13,6 +13,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -21,6 +22,18 @@ import java.util.Set;
 public class SocketEndPoint implements TransportEndPoint {
 
     int port ;
+
+    // Interface to listen on. Defaults to loopback: the socket protocol has no authentication,
+    // so exposing it on other interfaces must be an explicit choice (e.g. "0.0.0.0").
+    String host = "127.0.0.1";
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
 
     public int getPort() {
         return port;
@@ -50,7 +63,7 @@ public class SocketEndPoint implements TransportEndPoint {
 
                 ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
 
-                serverSocketChannel.socket().bind(new InetSocketAddress(port));
+                serverSocketChannel.socket().bind(new InetSocketAddress(host, port));
 
                 serverSocketChannel.configureBlocking(false);
 
@@ -61,7 +74,14 @@ public class SocketEndPoint implements TransportEndPoint {
 
                     Set<SelectionKey> selectedKeys = selector.selectedKeys();
 
-                    for (SelectionKey key : selectedKeys) {
+                    Iterator<SelectionKey> it = selectedKeys.iterator();
+                    while (it.hasNext()) {
+                      SelectionKey key = it.next();
+                      it.remove();   // remove via the iterator; Set.remove during for-each throws ConcurrentModificationException
+                      try {
+                        if (!key.isValid()) {
+                            continue;   // cancelled by a worker after the peer disconnected
+                        }
                         if (key.isAcceptable()) {
                             SocketChannel server = serverSocketChannel.accept();
                             server.configureBlocking(false);
@@ -94,7 +114,10 @@ public class SocketEndPoint implements TransportEndPoint {
                             eventFramework.sendMessage(wrapper);
 
                         }
-                        selectedKeys.remove(key);
+                      } catch (RuntimeException e) {
+                        // one misbehaving connection must not stop the listener thread
+                        e.printStackTrace();
+                      }
 
                     }
 
