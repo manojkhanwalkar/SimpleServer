@@ -5,6 +5,8 @@ import event.Message;
 import trial.MyStringMessage;
 
 import java.io.IOException;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Created by mkhanwalkar on 5/8/15.
@@ -13,36 +15,42 @@ public class RabbitReceiver implements Receiver {
 
     Channel channel ;
     String queue ;
-    QueueingConsumer consumer;
+    private final BlockingQueue<byte[]> deliveries = new LinkedBlockingQueue<>();
+    private boolean consuming;
 
     public RabbitReceiver(Channel channel, String queue)
     {
         this.channel = channel ;
         this.queue = queue;
-     /*   try {
-          //  consumer = new QueueingConsumer(channel);
-            //channel.basicConsume(queue, true, consumer);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-
     }
 
+    /** Blocks until a message arrives. Returns null if the consumer cannot start or the thread is interrupted. */
+    public Message recv() {
+        try {
+            startConsuming();
+            return new MyStringMessage(new String(deliveries.take()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return null;
+    }
 
-
-     public Message recv() {
-
-         //while (true) {
-         QueueingConsumer.Delivery delivery = null;
-         try {
-             delivery = consumer.nextDelivery();
-         } catch (InterruptedException e) {
-             e.printStackTrace();
-         }
-         String message = new String(delivery.getBody());
-         return new MyStringMessage(message);
-
-     }
+    /** Subscribes on first use, so a receiver driven by setListener never competes with this consumer. */
+    private synchronized void startConsuming() throws IOException {
+        if (consuming) {
+            return;
+        }
+        channel.basicConsume(queue, true, new DefaultConsumer(channel) {
+            @Override
+            public void handleDelivery(String consumerTag, Envelope envelope,
+                                       AMQP.BasicProperties properties, byte[] body) {
+                deliveries.add(body);
+            }
+        });
+        consuming = true;
+    }
 
      public void setListener(Listener listner)  {
          try {

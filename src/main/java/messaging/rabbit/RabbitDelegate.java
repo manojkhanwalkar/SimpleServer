@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Created by mkhanwalkar on 5/8/15.
@@ -46,7 +47,7 @@ public class RabbitDelegate implements Delegate {
                 Channel channel = connections.get(i % numConnections).createChannel();
                 channels.add(channel);
             }
-        } catch (IOException e) {
+        } catch (IOException | TimeoutException e) {
             e.printStackTrace();
         }
 
@@ -64,7 +65,7 @@ public class RabbitDelegate implements Delegate {
 
             for (int i=0;i<connections.size();i++)
                  connections.get(i).close();
-        } catch (IOException e) {
+        } catch (IOException | TimeoutException e) {
             e.printStackTrace();
         }
 
