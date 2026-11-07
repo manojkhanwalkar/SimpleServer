@@ -62,6 +62,11 @@ public class MessagingTuple {
       else
         {
             key.cancel();
+            try {
+                channel.close();   // release the descriptor; a cancelled key alone leaks it
+            } catch (java.io.IOException e) {
+                e.printStackTrace();
+            }
 
         }
 
